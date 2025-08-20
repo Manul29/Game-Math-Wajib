@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Slide</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0 0 50px 0;
+    overflow-x: hidden;
+    background: linear-gradient(to bottom, #ffe6e6, #fff0f5);
+  }
+  .content { margin-top: 20px; padding: 0 15px; position: relative; z-index: 2; }
+  h2, h3 { margin: 8px 0; }
+  input, button {
+    padding: 12px 16px; border-radius: 8px; border: none;
+    margin: 8px 0; font-size: 1rem; width: 80%; max-width: 300px;
+  }
+  button {
+    background: #ff4d6d; color: white; cursor: pointer; transition: 0.3s;
+  }
+  button:hover { background:#ff667f; }
+  audio { width: 90%; max-width: 300px; margin-top: 10px; }
+  .fadeText { opacity: 0; transform: translateY(20px); transition: all 1.5s ease; margin-top: 10px; }
+  .fadeText.show { opacity: 1; transform: translateY(0); }
+  .heart {
+    position: fixed; width: 20px; height: 20px;
+    background: red; transform: rotate(45deg);
+    animation: fall linear infinite; z-index: 1;
+  }
+  .heart::before, .heart::after {
+    content: ""; position: absolute; width: 20px; height: 20px;
+    background: red; border-radius: 50%;
+  }
+  .heart::before { top: -10px; left: 0; }
+  .heart::after { left: 10px; top: 0; }
+  @keyframes fall {
+    0% { transform: translateY(-50px) rotate(45deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(45deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="content" id="stage1">
+  <h2>Masukan nama kamu 💖</h2>
+  <input type="text" id="nama" placeholder="Nama kamu">
+  <button onclick="nextStage(2)">Kirim</button>
+</div>
+
+<div class="content" id="stage2" style="display:none;">
+  <h3 id="sapaan"></h3>
+  <h2>makasih yaa udah mau klik link ini 💕</h2>
+  <button onclick="nextStage(3)">Lanjut ➡️</button>
+</div>
+
+<div class="content" id="stage3" style="display:none;">
+  <h2 id="tanyaNama"></h2>
+  <h3>Jika ada 10 burung di atas pohon dan ditembak satu, berapa yang tersisa?</h3>
+  <button onclick="jawaban1('9')">9 💖</button>
+  <button onclick="jawaban1('0')">0 😢</button>
+</div>
+
+<div class="content" id="stage4" style="display:none;">
+  <div id="hasil1"></div>
+  <h3>4 + 4 × 3 × 0 = ? 🤔</h3>
+  <button onclick="jawaban2('0')">0 💖</button>
+  <button onclick="jawaban2('12')">12 😍</button>
+  <button onclick="jawaban2('4')">4 😅</button>
+</div>
+
+<div class="content" id="stage5" style="display:none;">
+  <div id="hasil2"></div>
+  <h3>Sekarang pertanyaan terakhir nih 😍</h3>
+  <h3>Apa warna favorit kamu? 🎨</h3>
+  <input type="text" id="warna" placeholder="Tulis warna favoritmu...">
+  <button onclick="nextStage(6)">Kirim Jawaban</button>
+</div>
+
+<div class="content" id="stage6" style="display:none;">
+  <h2 id="warnaFav"></h2>
+  <h3>Sebelum itu aku mau bilang sesuatu nih sama kamu… ✨</h3>
+  <button id="playBtn">Enter ➡️</button>
+  <audio id="musik" src="https://manul29.github.io/test/Nadhif Basalamah - bergema sampai selamanya (Official Lyric Video).mp3"></audio>
+  <div id="laguInfo"></div>
+</div>
+
+<div class="content" id="confessSlide" style="display:none;">
+  <h2 id="confessText" class="fadeText">Avika Wahyuni Sari, aku mau jujur sama kamu kalo aku sebenernya suka sama kamu ❤️</h2>
+  <h3 id="confessText2" class="fadeText">Aku ga berharap kok buat kamu suka balik, aku cuma mau jujur sama kamu 💕</h3>
+  <h3 id="confessText3" class="fadeText">Semangat teruss yaa, have a nice day 😍</h3>
+  <h3 id="confessText4" class="fadeText">Sory klo agak berlebihan, hehehe 💖</h3>
+</div>
+
+<script>
+let nama = "";
+let jawabanPertama = "";
+let jawabanKedua = "";
+
+function nextStage(stage) {
+  document.querySelectorAll('.content').forEach(div => div.style.display="none");
+  if(stage === 2){
+    nama = document.getElementById("nama").value;
+    document.getElementById("sapaan").textContent = "Haiii, " + nama + " ❤️";
+  }
+  if(stage === 3){
+    document.getElementById("tanyaNama").textContent = nama + ", aku mau tanya sesuatu... 😳";
+  }
+  if(stage === 6){
+    let warna = document.getElementById("warna").value;
+    document.getElementById("warnaFav").innerHTML = 
+      `Waww, jadi warna favorit kamu adalah <span style='color:${warna};'>${warna}</span> 😍`;
+    const btn = document.getElementById('playBtn');
+    const audio = document.getElementById('musik');
+    const info = document.getElementById('laguInfo');
+    btn.addEventListener('click', () => {
+      audio.play();
+      btn.style.display = 'none';
+      
+      setTimeout(() => {
+        document.getElementById('confessSlide').style.display = 'block';
+        setTimeout(()=>{document.getElementById('confessText').classList.add('show');},500);
+        setTimeout(()=>{document.getElementById('confessText2').classList.add('show');},2000);
+        setTimeout(()=>{document.getElementById('confessText3').classList.add('show');},3500);
+        setTimeout(()=>{document.getElementById('confessText4').classList.add('show');},5000);
+      },1000);
+    });
+  }
+  document.getElementById("stage"+stage).style.display="block";
+}
+
+function jawaban1(val){
+  jawabanPertama = val;
+  document.querySelectorAll('.content').forEach(div => div.style.display="none");
+  if(val === "0"){
+    document.getElementById("hasil1").innerHTML = `<h2>Betul, ${nama} 🎉💕</h2><h3>Semua burung terbang ketakutan 😍</h3>`;
+  }else{
+    document.getElementById("hasil1").innerHTML = `<h2>Hehe hampir benar 😅</h2><h3>Jawaban aslinya 0 karena semua burung terbang 💨</h3>`;
+  }
+  document.getElementById("stage4").style.display="block";
+}
+
+function jawaban2(val){
+  jawabanKedua = val;
+  document.querySelectorAll('.content').forEach(div => div.style.display="none");
+  if(val === "4"){
+    document.getElementById("hasil2").innerHTML = `<h3>Jawabanmu benar ✨</h3>`;
+  }else{
+    document.getElementById("hasil2").innerHTML = `<h3>Hmm belum pas 😅 Jawaban benar = 4 💖</h3>`;
+  }
+  document.getElementById("stage5").style.display="block";
+}
+
+// animasi hati jatuh
+function createHeart() {
+  const heart = document.createElement('div');
+  heart.classList.add('heart');
+  heart.style.left = Math.random()*100+'vw';
+  heart.style.animationDuration = 3 + Math.random()*2 + 's';
+  heart.style.opacity = Math.random();
+  document.body.appendChild(heart);
+  setTimeout(()=>{heart.remove();},5000);
+}
+setInterval(createHeart,300);
+</script>
+</body>
+</html>
