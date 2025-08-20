@@ -165,6 +165,16 @@ function createHeart() {
   setTimeout(()=>{heart.remove();},5000);
 }
 setInterval(createHeart,300);
-</script>
+
+   document.addEventListener("visibilitychange", function () {
+            const audio = document.getElementById("bgm");
+            if (document.visibilityState === "hidden") {
+                audio.pause();
+            } else {
+                audio.play().catch(() => { });
+            }
+        });
+    </script>
 </body>
 </html>
+
