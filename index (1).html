@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math from Hell - Escape the Infernal Realm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nosifer&family=Creepster&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Oswald', sans-serif;
+            background-color: #111;
+            color: #ff4500;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ====== BACKGROUND ANIMATIONS ====== */
+        .fire-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, #111, #330000, #111);
+            overflow: hidden;
+        }
+
+        .flame {
+            position: absolute;
+            bottom: -50px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ff4500, #a10000, transparent);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 3s infinite alternate;
+            opacity: 0.7;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateY(0) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-20px) scale(1.1); opacity: 0.9; }
+            100% { transform: translateY(-40px) scale(0.9); opacity: 0.5; }
+        }
+
+        .ember {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ff6b35;
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 5s infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        /* ====== LAYOUT SECTIONS ====== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .section.active {
+            display: flex;
+        }
+
+        /* ====== HOME SECTION ====== */
+        .home-section {
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Nosifer', cursive;
+            font-size: 4rem;
+            color: #ff4500;
+            text-shadow: 0 0 20px #ff4500, 0 0 40px #a10000;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .subtitle {
+            font-family: 'Creepster', cursive;
+            font-size: 1.5rem;
+            color: #a10000;
+            margin-bottom: 40px;
+        }
+
+        .name-input-container {
+            margin-bottom: 30px;
+        }
+
+        .name-input {
+            padding: 15px;
+            width: 300px;
+            max-width: 100%;
+            background: rgba(17, 17, 17, 0.8);
+            border: 2px solid #a10000;
+            border-radius: 5px;
+            color: #ff4500;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: linear-gradient(to bottom, #ff4500, #a10000);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 69, 0, 0.7);
+            background: linear-gradient(to bottom, #ff6b35, #c10000);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* ====== QUIZ SECTION ====== */
+        .quiz-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(17, 17, 17, 0.9);
+            border: 2px solid #a10000;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.5);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            color: #ff6b35;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background: #222;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #ff4500, #a10000);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .question {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ff4500;
+        }
+
+        .answers {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .answer-btn {
+            padding: 15px;
+            background: #222;
+            border: 2px solid #a10000;
+            color: #ff4500;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            background: #333;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .answer-btn.correct {
+            background: #2a5a2a;
+            border-color: #4a9a4a;
+            color: #7fff00;
+            animation: correct-pulse 0.5s;
+        }
+
+        .answer-btn.incorrect {
+            background: #5a2a2a;
+            border-color: #9a4a4a;
+            color: #ff7f7f;
+            animation: shake 0.5s;
+        }
+
+        @keyframes correct-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            min-height: 30px;
+        }
+
+        /* ====== RESULT SECTION ====== */
+        .result-container {
+            text-align: center;
+            background: rgba(17, 17, 17, 0.9);
+            border: 2px solid #a10000;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.5);
+        }
+
+        .result-title {
+            font-family: 'Nosifer', cursive;
+            font-size: 3rem;
+            color: #ff4500;
+            margin-bottom: 30px;
+        }
+
+        .result-score {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .result-message {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            min-height: 60px;
+        }
+
+        .result-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ====== CALCULATOR ====== */
+        .calc-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(to bottom, #ff4500, #a10000);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.5);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .calc-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .calculator {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 300px;
+            background: #222;
+            border: 2px solid #a10000;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.5);
+            display: none;
+            z-index: 100;
+        }
+
+        .calculator.show {
+            display: block;
+        }
+
+        .calc-display {
+            width: 100%;
+            height: 60px;
+            background: #111;
+            border: 1px solid #a10000;
+            border-radius: 5px;
+            color: #ff4500;
+            font-size: 1.5rem;
+            text-align: right;
+            padding: 0 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .calc-btn {
+            height: 50px;
+            background: #333;
+            border: 1px solid #a10000;
+            color: #ff4500;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+
+        .calc-btn:hover {
+            background: #444;
+            transform: translateY(-2px);
+        }
+
+        .calc-btn:active {
+            transform: translateY(0);
+        }
+
+        .calc-btn.operator {
+            background: #a10000;
+            color: #fff;
+        }
+
+        .calc-btn.equals {
+            background: #ff4500;
+            color: #fff;
+        }
+
+        .calc-btn.clear {
+            background: #550000;
+            color: #fff;
+        }
+
+        /* ====== SOUND TOGGLE ====== */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(17, 17, 17, 0.8);
+            border: 2px solid #a10000;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 69, 0, 0.2);
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+
+        /* ====== VISUAL EFFECTS ====== */
+        .flash-red {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.5);
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+        }
+
+        .flash-red.show {
+            display: block;
+            animation: flash 0.5s;
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .golden-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent);
+            z-index: 999;
+            pointer-events: none;
+            display: none;
+        }
+
+        .golden-glow.show {
+            display: block;
+            animation: glow 1s;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* ====== RESPONSIVE DESIGN ====== */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 3rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .quiz-container {
+                padding: 20px;
+            }
+
+            .question {
+                font-size: 1.5rem;
+            }
+
+            .answers {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator {
+                width: 90%;
+                right: 5%;
+            }
+
+            .result-title {
+                font-size: 2rem;
+            }
+
+            .result-score {
+                font-size: 1.5rem;
+            }
+
+            .result-message {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .question {
+                font-size: 1.2rem;
+            }
+
+            .result-title {
+                font-size: 1.8rem;
+            }
+
+            .result-score {
+                font-size: 1.3rem;
+            }
+
+            .result-message {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="fire-bg" id="fireBg"></div>
+
+    <!-- Visual Effects -->
+    <div class="flash-red" id="flashRed"></div>
+    <div class="golden-glow" id="goldenGlow"></div>
+
+    <!-- Sound Toggle -->
+    <div class="sound-toggle" id="soundToggle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff4500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+    </div>
+
+    <!-- Home Section -->
+    <section class="section home-section active" id="homeSection">
+        <div class="container">
+            <h1 class="title">Math from Hell 🔥</h1>
+            <p class="subtitle">Solve the equations or burn in eternal damnation!</p>
+            
+            <div class="name-input-container">
+                <input type="text" class="name-input" id="nameInput" placeholder="Enter your soul's name..." maxlength="20">
+            </div>
+            
+            <button class="btn" id="startBtn">Begin Your Torment</button>
+            
+            <div id="lastScore" style="margin-top: 30px; font-size: 1.2rem;"></div>
+        </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section class="section" id="quizSection">
+        <div class="container">
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <div id="playerName">Player</div>
+                    <div id="scoreDisplay">Score: 0</div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="question" id="question">Question will appear here</div>
+                
+                <div class="answers" id="answers">
+                    <!-- Answer buttons will be generated by JavaScript -->
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Result Section -->
+    <section class="section" id="resultSection">
+        <div class="container">
+            <div class="result-container">
+                <h2 class="result-title">Your Fate is Sealed!</h2>
+                <div class="result-score" id="resultScore">Score: 0/10</div>
+                <div class="result-message" id="resultMessage"></div>
+                <div class="result-buttons">
+                    <button class="btn" id="retryBtn">Face Damnation Again</button>
+                    <button class="btn" id="homeBtn">Return to the Abyss</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator -->
+    <div class="calc-toggle" id="calcToggle">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+            <line x1="8" y1="6" x2="16" y2="6"></line>
+            <line x1="8" y1="10" x2="16" y2="10"></line>
+            <line x1="8" y1="14" x2="16" y2="14"></line>
+            <line x1="8" y1="18" x2="16" y2="18"></line>
+        </svg>
+    </div>
+    
+    <div class="calculator" id="calculator">
+        <div class="calc-display" id="calcDisplay">0</div>
+        <div class="calc-buttons">
+            <button class="calc-btn clear" data-action="clear">C</button>
+            <button class="calc-btn" data-action="parenthesis">(</button>
+            <button class="calc-btn" data-action="parenthesis">)</button>
+            <button class="calc-btn operator" data-action="operator">/</button>
+            <button class="calc-btn" data-value="7">7</button>
+            <button class="calc-btn" data-value="8">8</button>
+            <button class="calc-btn" data-value="9">9</button>
+            <button class="calc-btn operator" data-action="operator">×</button>
+            <button class="calc-btn" data-value="4">4</button>
+            <button class="calc-btn" data-value="5">5</button>
+            <button class="calc-btn" data-value="6">6</button>
+            <button class="calc-btn operator" data-action="operator">-</button>
+            <button class="calc-btn" data-value="1">1</button>
+            <button class="calc-btn" data-value="2">2</button>
+            <button class="calc-btn" data-value="3">3</button>
+            <button class="calc-btn operator" data-action="operator">+</button>
+            <button class="calc-btn" data-value="0">0</button>
+            <button class="calc-btn" data-action="decimal">.</button>
+            <button class="calc-btn operator" data-action="operator">%</button>
+            <button class="calc-btn equals" data-action="equals">=</button>
+        </div>
+    </div>
+
+    <script>
+        // ====== DOM ELEMENTS ======
+        const homeSection = document.getElementById('homeSection');
+        const quizSection = document.getElementById('quizSection');
+        const resultSection = document.getElementById('resultSection');
+        const nameInput = document.getElementById('nameInput');
+        const startBtn = document.getElementById('startBtn');
+        const playerName = document.getElementById('playerName');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const progressBar = document.getElementById('progressBar');
+        const question = document.getElementById('question');
+        const answers = document.getElementById('answers');
+        const feedback = document.getElementById('feedback');
+        const resultScore = document.getElementById('resultScore');
+        const resultMessage = document.getElementById('resultMessage');
+        const retryBtn = document.getElementById('retryBtn');
+        const homeBtn = document.getElementById('homeBtn');
+        const flashRed = document.getElementById('flashRed');
+        const goldenGlow = document.getElementById('goldenGlow');
+        const soundToggle = document.getElementById('soundToggle');
+        const calcToggle = document.getElementById('calcToggle');
+        const calculator = document.getElementById('calculator');
+        const calcDisplay = document.getElementById('calcDisplay');
+        const fireBg = document.getElementById('fireBg');
+        const lastScore = document.getElementById('lastScore');
+
+        // ====== QUIZ DATA ======
+        // You can easily edit these questions
+        const quizQuestions = [
+            {
+                question: "Sebuah pinjaman akan segera di lunasi dengan sistem anuitas bulanan. Jika besar dari angsuran Rp. 85.000, dan bunganya sebesar Rp. 315.000,00. Maka tentukanlah berapa jumlah dari anuitas tersebut?",
+                options: ["Rp. 400.000", "Rp. 300.000", "Rp. 450.000", "Rp. 350.000"],
+                correct: 0
+            },
+            {
+                question: "Sebuah pinjaman akan segera di lunasi dengan sistem anuitas bulanan. Jika besar anuitas nya Rp 600.000,00. Maka tentukanlah berapa angsuran ke-5 jika bunga ke-5 nya ialah sebesar Rp 415.000,00?",
+                options: ["Rp. 175.000", "Rp. 185.000", "Rp. 195.000", "Rp. 165.000"],
+                correct: 1
+            },
+            {
+                question: "Hutang sebesar Rp 1.000.000,00 akan segera di lunasi dengan anuitas sebesar Rp 125.000,00 per bulan nya, dengan suku bunganya sekitar 2% sebulan. Maka hitunglah berapa besarnya angsuran ke-5?",
+                options: ["Rp 113.655,38", "Rp 112.755,38", "Rp 113.655,4", "Rp 114.655,38"],
+                correct: 2
+            },
+            {
+                question: "Sebuah pinjaman akan segera di lunasi dengan sistem anuitas bulanan, jika besar anuitas nya Rp 400.000,00. Maka tentukanlah berapa besarnya angsuran yang pertama jika bunga pertamanya ialah sebesar Rp 250.000,00!",
+                options: ["Rp. 150.000", "Rp. 155.000", "Rp. 140.000", "Rp. 145.000"],
+                correct: 1
+            },
+            {
+                question: "Pada pelunasan hutang dengan anuitas suku bunga nya sekitar 1,5% sebulan, dan diketahui bahwa besar angsuran ke-2 nya ialah sebesar Rp 200.000,00. Maka berapakah besar angsuran pada bulan ke-5 nya ?",
+                options: ["Rp. 209.136", "Rp. 209.135,7", "Rp. 209.135,68", "Rp. 209.135,675"],
+                correct: 3
+            },
+            {
+                question: "Sebuah pinjaman Rp 10.000.000,00 akan segera di lunasi dengan nilai anuitas bulanan nya ialah sebesar Rp 500.000,00 dan bunga nya 3% sebulan. Maka tentukanlah berapa besarnya bunga pertama dan angsuran pertama, lalu berapakah besarnya angsuran ke-9 dan bunga ke-9?",
+                options: ["Rp. 246.645,98", "Rp. 246.646", "Rp. 247.645,98", "Rp. 247.646"],
+                correct: 0
+            },
+            {
+                question: "Doni bersama istrinya berencana untuk mengambil rumah di daerah pegunungan. dengan harga sekitar Rp 250.000.000, tapi Doni hanya mempunyai uang muka sekitar Rp 100.000.000,00,. Lalu sisanya akan akan di cicil dengan sistem anuitas tahunan selama 10 tahun dengan suku bunga nya ialah sekitar 18% pertahun. Maka tentukanlah niai anuitasnya dan cicilan setiap bulan nya?",
+                options: ["Rp 2.781.533,02", "Rp 2.782.433,02", "Rp 2.881.433,02", "Rp 2.781.433,02"],
+                correct: 3
+            },
+            {
+                question: "Tentukanlah nilai anuitas dari sebuah pinjaman sebesar Rp 5.000.000 selama 2 fahun dengan suku bunga nya sekitar 2% perbulan?",
+                options: ["Rp. 264.455, 49", "Rp. 264.455,5", "Rp. 264.355,49", "Rp. 264.355,5"],
+                correct: 2
+            },
+            {
+                question: "Suatu pinjaman sebesar Rp1.000.000,00 dilunasi dengan 5 anuitas. Anuitas pertama dibayar setelah satu tahun dengan bunga 6% per tahun. Besarnya anuitas adalah ...",
+                options: ["Rp. 237.396,00", "Rp. 236.996,00", "Rp. 237.476,00", "Rp. 233.294,00"],
+                correct: 0
+            },
+            {
+                question: "Suatu pinjaman dilunasi dengan anuitas bulanan sebesar Rp1.250.000,00. Besar suku bunga majemuknya adalah 5% per bulan. Jika besar angsuran pada bulan pertama Rp250.000,00; besar pinjamannya adalah ....",
+                options: ["Rp. 30.000.000", "Rp. 20.000.000", "Rp. 10.000.000", "Rp. 40.000.000"],
+                correct: 1
+            }
+        ];
+
+        // ====== QUIZ STATE ======
+        let currentQuestion = 0;
+        let score = 0;
+        let playerNameValue = "";
+        let soundEnabled = true;
+        let quizActive = false;
+
+        // ====== CALCULATOR STATE ======
+        let calcDisplayValue = '0';
+        let calcPreviousValue = '';
+        let calcOperation = null;
+        let calcShouldResetDisplay = false;
+
+        // ====== AUDIO CONTEXT ======
+        let audioContext;
+        let ambientSound;
+        let ambientGainNode;
+
+        // ====== INITIALIZATION ======
+        function init() {
+            // Check for saved score
+            const savedScore = localStorage.getItem('mathFromHellScore');
+            if (savedScore) {
+                lastScore.textContent = `Last attempt: ${savedScore}/10`;
+            }
+
+            // Initialize background animations
+            createFlames();
+            createEmbers();
+
+            // Set up event listeners
+            startBtn.addEventListener('click', startQuiz);
+            retryBtn.addEventListener('click', startQuiz);
+            homeBtn.addEventListener('click', goHome);
+            soundToggle.addEventListener('click', toggleSound);
+            calcToggle.addEventListener('click', toggleCalculator);
+
+            // Set up calculator buttons
+            document.querySelectorAll('.calc-btn').forEach(btn => {
+                btn.addEventListener('click', handleCalcButton);
+            });
+        }
+
+        // ====== BACKGROUND ANIMATIONS ======
+        function createFlames() {
+            for (let i = 0; i < 15; i++) {
+                const flame = document.createElement('div');
+                flame.className = 'flame';
+                flame.style.left = `${Math.random() * 100}%`;
+                flame.style.animationDuration = `${2 + Math.random() * 3}s`;
+                flame.style.animationDelay = `${Math.random() * 2}s`;
+                fireBg.appendChild(flame);
+            }
+        }
+
+        function createEmbers() {
+            setInterval(() => {
+                if (document.querySelectorAll('.ember').length < 20) {
+                    const ember = document.createElement('div');
+                    ember.className = 'ember';
+                    ember.style.left = `${Math.random() * 100}%`;
+                    ember.style.bottom = '0';
+                    ember.style.animationDuration = `${3 + Math.random() * 4}s`;
+                    ember.style.animationDelay = `${Math.random() * 2}s`;
+                    fireBg.appendChild(ember);
+
+                    // Remove ember after animation
+                    setTimeout(() => {
+                        ember.remove();
+                    }, 7000);
+                }
+            }, 500);
+        }
+
+        // ====== QUIZ FUNCTIONS ======
+        function startQuiz() {
+            // Get player name
+            playerNameValue = nameInput.value.trim() || "Lost Soul";
+            playerName.textContent = playerNameValue;
+
+            // Reset quiz state
+            currentQuestion = 0;
+            score = 0;
+            scoreDisplay.textContent = `Score: 0`;
+            quizActive = true;
+
+            // Show quiz section
+            homeSection.classList.remove('active');
+            resultSection.classList.remove('active');
+            quizSection.classList.add('active');
+
+            // Load first question
+            loadQuestion();
+
+            // Start ambient sound if enabled
+            if (soundEnabled) {
+                startAmbientSound();
+            }
+        }
+
+        function loadQuestion() {
+            // Update progress bar
+            const progress = (currentQuestion / quizQuestions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // Get current question data
+            const q = quizQuestions[currentQuestion];
+
+            // Update question text
+            question.textContent = q.question;
+
+            // Clear previous answers
+            answers.innerHTML = '';
+            feedback.textContent = '';
+
+            // Create answer buttons
+            q.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'answer-btn';
+                button.textContent = option;
+                button.addEventListener('click', () => selectAnswer(index));
+                answers.appendChild(button);
+            });
+        }
+
+        function selectAnswer(index) {
+            if (!quizActive) return;
+
+            // Get current question data
+            const q = quizQuestions[currentQuestion];
+
+            // Disable all buttons
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Check if answer is correct
+            const isCorrect = index === q.correct;
+
+            if (isCorrect) {
+                // Correct answer
+                buttons[index].classList.add('correct');
+                feedback.textContent = "Correct! You've escaped this torment...";
+                feedback.style.color = "#7fff00";
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                
+                // Play correct sound
+                playCorrectSound();
+                
+                // Show golden glow
+                goldenGlow.classList.add('show');
+                setTimeout(() => goldenGlow.classList.remove('show'), 1000);
+            } else {
+                // Wrong answer
+                buttons[index].classList.add('incorrect');
+                buttons[q.correct].classList.add('correct');
+                feedback.textContent = `Wrong! The correct answer was ${q.options[q.correct]}. The flames grow hotter...`;
+                feedback.style.color = "#ff7f7f";
+                
+                // Play wrong sound
+                playWrongSound();
+                
+                // Show red flash
+                flashRed.classList.add('show');
+                setTimeout(() => flashRed.classList.remove('show'), 500);
+            }
+
+            // Move to next question after delay
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < quizQuestions.length) {
+                    loadQuestion();
+                } else {
+                    endQuiz();
+                }
+            }, 2000);
+        }
+
+        function endQuiz() {
+            quizActive = false;
+
+            // Stop ambient sound
+            stopAmbientSound();
+
+            // Calculate result message
+            let message;
+            if (score >= 8) {
+                message = "You survived the flames! Your soul is free... for now.";
+            } else if (score >= 5) {
+                message = "You are scorched but not defeated. Try again, mortal.";
+            } else {
+                message = "You are doomed forever! The demons feast on your failure.";
+            }
+
+            // Save score to localStorage
+            localStorage.setItem('mathFromHellScore', `${score}/10`);
+
+            // Update result section
+            resultScore.textContent = `Score: ${score}/10`;
+            resultMessage.textContent = message;
+
+            // Show result section
+            quizSection.classList.remove('active');
+            resultSection.classList.add('active');
+        }
+
+        function goHome() {
+            // Stop ambient sound
+            stopAmbientSound();
+
+            // Show home section
+            quizSection.classList.remove('active');
+            resultSection.classList.remove('active');
+            homeSection.classList.add('active');
+        }
+
+        // ====== CALCULATOR FUNCTIONS ======
+        function toggleCalculator() {
+            calculator.classList.toggle('show');
+        }
+
+        function handleCalcButton(e) {
+            const action = e.target.dataset.action;
+            const value = e.target.dataset.value;
+
+            if (value !== undefined) {
+                inputNumber(value);
+            } else if (action) {
+                switch (action) {
+                    case 'clear':
+                        clearCalc();
+                        break;
+                    case 'decimal':
+                        inputDecimal();
+                        break;
+                    case 'operator':
+                        setOperation(e.target.textContent);
+                        break;
+                    case 'equals':
+                        calculate();
+                        break;
+                    case 'parenthesis':
+                        inputParenthesis(e.target.textContent);
+                        break;
+                }
+            }
+        }
+
+        function updateCalcDisplay() {
+            calcDisplay.textContent = calcDisplayValue;
+        }
+
+        function inputNumber(num) {
+            if (calcShouldResetDisplay) {
+                calcDisplayValue = '';
+                calcShouldResetDisplay = false;
+            }
+
+            if (calcDisplayValue === '0') {
+                calcDisplayValue = num;
+            } else {
+                calcDisplayValue += num;
+            }
+
+            updateCalcDisplay();
+        }
+
+        function inputDecimal() {
+            if (calcShouldResetDisplay) {
+                calcDisplayValue = '0';
+                calcShouldResetDisplay = false;
+            }
+
+            if (!calcDisplayValue.includes('.')) {
+                calcDisplayValue += '.';
+            }
+
+            updateCalcDisplay();
+        }
+
+        function inputParenthesis(paren) {
+            if (calcShouldResetDisplay) {
+                calcDisplayValue = '';
+                calcShouldResetDisplay = false;
+            }
+
+            calcDisplayValue += paren;
+            updateCalcDisplay();
+        }
+
+        function clearCalc() {
+            calcDisplayValue = '0';
+            calcPreviousValue = '';
+            calcOperation = null;
+            calcShouldResetDisplay = false;
+            updateCalcDisplay();
+        }
+
+        function setOperation(op) {
+            if (calcOperation !== null) calculate();
+
+            calcPreviousValue = calcDisplayValue;
+            calcOperation = op;
+            calcShouldResetDisplay = true;
+        }
+
+        function calculate() {
+            if (calcOperation === null || calcShouldResetDisplay) return;
+
+            let result;
+            const prev = parseFloat(calcPreviousValue);
+            const current = parseFloat(calcDisplayValue);
+
+            switch (calcOperation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '×':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = prev / current;
+                    break;
+                case '%':
+                    result = prev % current;
+                    break;
+            }
+
+            calcDisplayValue = result.toString();
+            calcOperation = null;
+            calcPreviousValue = '';
+            calcShouldResetDisplay = true;
+            updateCalcDisplay();
+        }
+
+        // ====== SOUND FUNCTIONS ======
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundToggle.classList.toggle('muted');
+
+            if (soundEnabled && quizActive) {
+                startAmbientSound();
+            } else {
+                stopAmbientSound();
+            }
+        }
+
+        function playCorrectSound() {
+            if (!soundEnabled) return;
+
+            initAudio();
+
+            // Create angelic chime sound
+            const oscillator1 = audioContext.createOscillator();
+            const oscillator2 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator1.connect(gainNode);
+            oscillator2.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator1.type = 'sine';
+            oscillator2.type = 'sine';
+
+            oscillator1.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+            oscillator1.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 0.2); // E5
+
+            oscillator2.frequency.setValueAtTime(659.25, audioContext.currentTime); // E5
+            oscillator2.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator1.start(audioContext.currentTime);
+            oscillator2.start(audioContext.currentTime);
+            oscillator1.stop(audioContext.currentTime + 0.5);
+            oscillator2.stop(audioContext.currentTime + 0.5);
+        }
+
+        function playWrongSound() {
+            if (!soundEnabled) return;
+
+            initAudio();
+
+            // Create demonic laugh/fire burst sound
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'sawtooth';
+            filter.type = 'lowpass';
+            filter.frequency.value = 200;
+
+            oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.3);
+
+            gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function startAmbientSound() {
+            if (!soundEnabled || ambientSound) return;
+
+            initAudio();
+
+            // Create ambient fire sound
+            const bufferSize = 2 * audioContext.sampleRate;
+            const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            ambientSound = audioContext.createBufferSource();
+            ambientSound.buffer = noiseBuffer;
+            ambientSound.loop = true;
+
+            ambientGainNode = audioContext.createGain();
+            ambientGainNode.gain.value = 0.05;
+
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 400;
+
+            ambientSound.connect(filter);
+            filter.connect(ambientGainNode);
+            ambientGainNode.connect(audioContext.destination);
+
+            ambientSound.start();
+        }
+
+        function stopAmbientSound() {
+            if (ambientSound) {
+                ambientSound.stop();
+                ambientSound = null;
+            }
+        }
+
+        // ====== INITIALIZATION ======
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

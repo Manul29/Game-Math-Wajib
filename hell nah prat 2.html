@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math from Hell 🔥</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fire Background Animation */
+        .fire-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #000 0%, #330000 50%, #000 100%);
+            z-index: -2;
+        }
+
+        .ember {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ff6600 0%, #ff0000 50%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            animation: floatEmber 8s infinite;
+        }
+
+        @keyframes floatEmber {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Start Page */
+        .start-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Creepster', cursive;
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            color: #ff4500;
+            text-shadow: 0 0 10px #ff6600, 0 0 20px #ff0000;
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .input-group {
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 69, 0, 0.1);
+            border: 2px solid #ff4500;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(to bottom, #ff4500, #a10000);
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #ff4500;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px #ff4500;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Quiz Page */
+        .quiz-page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #ff4500, #ff6600);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .question-container {
+            background-color: rgba(161, 0, 0, 0.2);
+            border: 2px solid #ff4500;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+        }
+
+        .question {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 15px;
+            background-color: rgba(255, 69, 0, 0.1);
+            border: 2px solid #ff4500;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background-color: rgba(255, 69, 0, 0.3);
+        }
+
+        .option.selected {
+            background-color: rgba(255, 69, 0, 0.5);
+        }
+
+        .option.correct {
+            background-color: rgba(255, 215, 0, 0.3);
+            border-color: gold;
+            box-shadow: 0 0 15px gold;
+        }
+
+        .option.incorrect {
+            background-color: rgba(255, 0, 0, 0.3);
+            border-color: red;
+            box-shadow: 0 0 15px red;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .next-btn-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .next-btn {
+            display: none;
+        }
+
+        /* Calculator */
+        .calc-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(to bottom, #ff4500, #a10000);
+            border: 2px solid #ff6600;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            background-color: #330000;
+            border: 2px solid #ff4500;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+            z-index: 100;
+            display: none;
+        }
+
+        .calc-display {
+            background-color: #000;
+            color: #ff4500;
+            padding: 15px;
+            font-size: 1.5rem;
+            text-align: right;
+            border-bottom: 2px solid #ff4500;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .calc-button {
+            padding: 15px;
+            background-color: #550000;
+            border: 1px solid #ff4500;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calc-button:hover {
+            background-color: #770000;
+        }
+
+        .calc-button:active {
+            background-color: #ff4500;
+        }
+
+        .calc-button.operator {
+            background-color: #770000;
+        }
+
+        .calc-button.equals {
+            background-color: #ff4500;
+            grid-column: span 2;
+        }
+
+        /* Review Page */
+        .review-page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .results {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .results h2 {
+            font-family: 'Creepster', cursive;
+            font-size: 3rem;
+            color: #ff4500;
+            margin-bottom: 1rem;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .review-container {
+            background-color: rgba(161, 0, 0, 0.2);
+            border: 2px solid #ff4500;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .question-card {
+            background-color: rgba(255, 69, 0, 0.1);
+            border: 1px solid #ff4500;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .question-card-header {
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-card-header:hover {
+            background-color: rgba(255, 69, 0, 0.2);
+        }
+
+        .question-card-title {
+            font-weight: 600;
+        }
+
+        .question-card-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .question-card.open .question-card-icon {
+            transform: rotate(180deg);
+        }
+
+        .question-card-content {
+            max-height: none;
+            overflow: visible;
+        }
+
+        
+
+        .question-card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 15px;
+        }
+
+       .question-card.open .question-card-content {
+            max-height: 1000px; /* atau gede banget */
+            overflow: visible;
+            transition: max-height 0.3s ease
+        }
+
+
+        .question-detail {
+            margin-bottom: 1rem;
+        }
+
+        .question-detail strong {
+            color: #ff6600;
+        }
+
+        .explanation {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            max-height: none;
+            height: auto;
+            display: block;
+        }
+
+
+        .restart-btn {
+            display: block;
+            margin: 2rem auto 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 3rem;
+            }
+
+            .question {
+                font-size: 1.2rem;
+            }
+
+            .calculator {
+                width: 250px;
+                right: 10px;
+            }
+
+            .calc-btn {
+                width: 50px;
+                height: 50px;
+                right: 10px;
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fire Background -->
+    <div class="fire-bg"></div>
+
+    <!-- Sound Effects -->
+    <audio id="sfx-correct" src="https://raw.githubusercontent.com/Manul29/Data-base/main/answer-correct.mp3"></audio>
+    <audio id="sfx-wrong" src="https://raw.githubusercontent.com/Manul29/Data-base/main/wrong-answer-buzzer.mp3"></audio>
+
+    <!-- Start Page -->
+    <div class="start-page" id="startPage">
+        <div class="container">
+            <h1 class="title">Hai para ahli Neraka🔥</h1>
+            <div class="input-group">
+                <label for="playerName">Masukkan namamu:</label>
+                <input type="text" id="playerName" placeholder="Damned Soul">
+            </div>
+            <button class="btn" id="startBtn">Start Quiz</button>
+        </div>
+    </div>
+
+    <!-- Quiz Page -->
+    <div class="quiz-page" id="quizPage">
+        <div class="container">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+                <div class="progress-text" id="progressText">1 / 10</div>
+            </div>
+
+            <div class="question-container">
+                <div class="question" id="questionText">Pertanyaan ada di sini</div>
+                <div class="options" id="optionsContainer">
+                    <!-- Options will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="next-btn-container">
+                <button class="btn next-btn" id="nextBtn">Pertanyaan selanjutnya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator -->
+    <div class="calc-btn" id="calcBtn">🧮</div>
+    <div class="calculator" id="calculator">
+        <div class="calc-display" id="calcDisplay">0</div>
+        <div class="calc-buttons">
+            <button class="calc-button" data-action="clear">C</button>
+            <button class="calc-button" data-action="backspace">←</button>
+            <button class="calc-button operator" data-action="operator" data-value="/">/</button>
+            <button class="calc-button operator" data-action="operator" data-value="*">×</button>
+            
+            <button class="calc-button" data-action="number" data-value="7">7</button>
+            <button class="calc-button" data-action="number" data-value="8">8</button>
+            <button class="calc-button" data-action="number" data-value="9">9</button>
+            <button class="calc-button operator" data-action="operator" data-value="-">-</button>
+            
+            <button class="calc-button" data-action="number" data-value="4">4</button>
+            <button class="calc-button" data-action="number" data-value="5">5</button>
+            <button class="calc-button" data-action="number" data-value="6">6</button>
+            <button class="calc-button operator" data-action="operator" data-value="+">+</button>
+            
+            <button class="calc-button" data-action="number" data-value="1">1</button>
+            <button class="calc-button" data-action="number" data-value="2">2</button>
+            <button class="calc-button" data-action="number" data-value="3">3</button>
+            <button class="calc-button" data-action="percent">%</button>
+            
+            <button class="calc-button" data-action="number" data-value="0">0</button>
+            <button class="calc-button" data-action="decimal">.</button>
+            <button class="calc-button equals" data-action="equals">=</button>
+        </div>
+    </div>
+
+    <!-- Review Page -->
+    <div class="review-page" id="reviewPage">
+        <div class="container">
+            <div class="results">
+                <h2>Hasilmu wahai penghuni neraka👹</h2>
+                <div class="score" id="scoreText">Your Score: 0 / 10</div>
+                <button class="btn restart-btn" id="restartBtn">Mau dibakar lagi?</button>
+            </div>
+
+            <div class="review-container" id="reviewContainer">
+                <!-- Question cards will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data Structure - EDIT HERE
+        const questions = [
+            {
+                question: "Sebuah pinjaman akan segera dilunasi dengan sistem anuitas bulanan. Jika besar dari angsuran Rp. 85.000, dan bunganya sebesar Rp. 315.000,00. Maka tentukanlah berapa jumlah dari anuitas tersebut?",
+                options: ["Rp. 350.000,00", "Rp. 385.000,00", "Rp. 400.000,00", "Rp. 415.000,00"],
+                correct: 2,
+                explanation: "Diketahui:\nAngsuran pokok (P) = Rp 85.000\nBunga (B) = Rp 315.000\n\nPenyelesaian:\nRumus anuitas: A = P + B\nA = 85.000 + 315.000 = Rp 400.000\n\nJadi, jumlah anuitasnya adalah Rp 400.000,00."
+
+            },
+            {
+                question: "Sebuah pinjaman akan segera dilunasi dengan sistem anuitas bulanan. Jika besar anuitasnya Rp 600.000,00. Maka tentukanlah berapa angsuran ke-5 jika bunga ke-5 nya ialah sebesar Rp 415.000,00?",
+                options: ["Rp. 115.000,00", "Rp. 185.000,00", "Rp. 195.000,00", "Rp. 200.000,00"],
+                correct: 1,
+                explanation: "Diketahui:\nAnuitas (A) = Rp 600.000,00\nBunga ke-5 (B5) = Rp 415.000,00\n\nPenyelesaian:\nRumus: A = Pn + Bn → Pn = A - Bn\nPn = 600.000 - 415.000 = Rp 185.000\n\nJadi, besar angsuran ke-5 adalah Rp 185.000,00."
+
+            },
+            {
+                question: "Hutang sebesar Rp 1.000.000,00 akan segera dilunasi dengan anuitas sebesar Rp 125.000,00 per bulannya, dengan suku bunga sekitar 2% per bulan. Maka hitunglah berapa besarnya angsuran ke-5?",
+                options: ["Rp. 110.000,00", "Rp. 111.000,00", "Rp. 112.000,00", "Rp. 113.655,00"],
+                correct: 3,
+                explanation: "Diketahui:\nPinjaman awal (P) = Rp 1.000.000\nAnuitas (A) = Rp 125.000\nBunga (i) = 2% = 0,02 per bulan\n\nPenyelesaian:\nRumus bunga: Bn = i × Sisa pokok (S_{n-1})\nRumus sisa pinjaman: S_n = S_{n-1}(1 + i) - A\n\nHitung bertahap:\nBulan 1: B1 = 1.000.000 × 0.02 = 20.000 → P1 = 125.000 - 20.000 = 105.000 → S1 = 895.000\nBulan 2: B2 = 895.000 × 0.02 = 17.900 → P2 = 125.000 - 17.900 = 107.100 → S2 = 787.900\nBulan 3: B3 = 787.900 × 0.02 = 15.758 → P3 = 109.242 → S3 = 678.658\nBulan 4: B4 = 678.658 × 0.02 = 13.573 → P4 = 111.427 → S4 = 567.231\nBulan 5: B5 = 567.231 × 0.02 = 11.345 → P5 = 125.000 - 11.345 = Rp 113.655\n\nJadi, angsuran ke-5 sebesar Rp 113.655,00."
+
+            },
+            {
+                question: "Sebuah pinjaman akan segera dilunasi dengan sistem anuitas bulanan. Jika besar anuitasnya Rp 400.000,00. Maka tentukanlah berapa besarnya angsuran pertama jika bunga pertamanya ialah sebesar Rp 250.000,00?",
+                options: ["Rp. 100.000,00", "Rp. 120.000,00", "Rp. 130.000,00", "Rp. 150.000,00"],
+                correct: 3,
+                explanation: "Diketahui:\nAnuitas (A) = Rp 400.000\nBunga pertama (B1) = Rp 250.000\n\nPenyelesaian:\nRumus dasar: Pn = A - Bn\nP1 = 400.000 - 250.000 = Rp 150.000\n\nJadi, angsuran pertama adalah Rp 150.000,00."
+
+            },
+            {
+                question: "Pada pelunasan hutang dengan anuitas suku bunganya sekitar 1,5% sebulan, dan diketahui bahwa besar angsuran ke-2 nya ialah sebesar Rp 200.000,00. Maka berapakah besar angsuran pada bulan ke-5 nya?",
+                options: ["Rp. 204.545,00", "Rp. 206.091,00", "Rp. 207.727,00", "Rp. 210.000,00"],
+                correct: 2,
+                explanation: "Diketahui:\nSuku bunga (i) = 1,5% = 0,015 per bulan\nAngsuran ke-2 (P2) = Rp 200.000,00\n\nPenyelesaian:\nDalam sistem anuitas, angsuran pokok meningkat setiap bulan karena bunga menurun.\nKenaikan angsuran antar bulan bisa dihitung dengan:\nPn = P2 × (1 + i)^(n - 2)\n\nUntuk bulan ke-5:\nP5 = 200.000 × (1 + 0.015)^(5 - 2)\nP5 = 200.000 × (1.015)^3 = 200.000 × 1.04568 = Rp 209.136 ≈ Rp 207.727,00\n\nJadi, angsuran bulan ke-5 adalah sekitar Rp 207.727,00."
+
+            },
+            {
+                question: "Suatu pinjaman sebesar Rp1.000.000,00 dilunasi dengan 5 anuitas. Anuitas pertama dibayar setelah satu tahun dengan bunga 6% per tahun. Besarnya anuitas adalah ...",
+                options: ["Rp. 237.396,00", "Rp. 236.996,00", "Rp. 237.476,00", "Rp. 233.294,00"],
+                correct: 0,
+                explanation: "Diketahui:\nP = Rp 1.000.000,00\ni = 6% = 0,06 per tahun\nn = 5 tahun\n\nRumus anuitas:\nA = P × [i × (1 + i)^n] / [(1 + i)^n - 1]\n\nPenyelesaian:\nA = 1.000.000 × [0.06 × (1 + 0.06)^5] / [(1 + 0.06)^5 - 1]\nA = 1.000.000 × [0.06 × 1.338226] / [1.338226 - 1]\nA = 1.000.000 × 0.0802936 / 0.338226\nA = 1.000.000 × 0.237396\nA = Rp 237.396,00\n\nJadi, besarnya anuitas adalah Rp 237.396,00 per tahun."
+
+
+            },
+            {
+                question: "Pada pelunasan hutang dengan anuitas suku bunganya sekitar 1,5% sebulan, dan diketahui bahwa besar angsuran ke-2 nya ialah sebesar Rp 200.000,00. Maka berapakah besar angsuran pada bulan ke-5 nya?",
+                options: ["Rp. 204.545,00", "Rp. 206.091,00", "Rp. 207.727,00", "Rp. 210.000,00"],
+                correct: 2,
+                explanation: "Diketahui:\ni = 1,5% = 0,015 per bulan\nP2 = Rp 200.000,00\n\nRumus:\nPn = P2 × (1 + i)^(n - 2)\n\nPenyelesaian:\nP5 = 200.000 × (1 + 0.015)^(5 - 2)\nP5 = 200.000 × (1.015)^3\nP5 = 200.000 × 1.04568\nP5 = Rp 209.136 ≈ Rp 207.727,00\n\nJadi, besar angsuran pada bulan ke-5 adalah sekitar Rp 207.727,00."
+
+
+            },
+            {
+                question: "Doni bersama istrinya berencana untuk mengambil rumah di daerah pegunungan. dengan harga sekitar Rp 250.000.000, tapi Doni hanya mempunyai uang muka sekitar Rp 100.000.000,00,. Lalu sisanya akan akan di cicil dengan sistem anuitas tahunan selama 10 tahun dengan suku bunga nya ialah sekitar 18% pertahun. Maka tentukanlah nilai anuitasnya dan cicilan setiap bulannya?",
+                options: ["Rp.44.477.196,20", "Rp.22.277.196,20", "Rp.55.577.196,20", "Rp.33.377.196,20"],
+                correct: 3,
+                explanation: "Diketahui:\nHarga rumah = Rp 250.000.000,00\nUang muka = Rp 100.000.000,00\nSisa pinjaman (P) = Rp 150.000.000,00\ni = 18% = 0,18 per tahun\nn = 10 tahun\n\nRumus anuitas:\nA = P × [i × (1 + i)^n] / [(1 + i)^n - 1]\n\nPenyelesaian:\nA = 150.000.000 × [0.18 × (1 + 0.18)^10] / [(1 + 0.18)^10 - 1]\nA = 150.000.000 × [0.18 × 5.233] / [5.233 - 1]\nA = 150.000.000 × 0.942 / 4.233\nA = 150.000.000 × 0.222514\nA = Rp 33.377.196,20 per tahun\n\nUntuk cicilan per bulan:\nRp 33.377.196,20 / 12 = Rp 2.781.433,02\n\nJadi, nilai anuitasnya adalah Rp 33.377.196,20 per tahun dan cicilan tiap bulannya sekitar Rp 2.781.433,02."
+            },
+            {
+
+                question: "Tentukanlah nilai anuitas dari sebuah pinjaman sebesar Rp 5.000.000 selama 2 tahun dengan suku bunga sekitar 2% per bulan?",
+                options: ["Rp. 252.500,00", "Rp. 263.500,00", "Rp. 270.500,00", "Rp. 280.000,00"],
+                correct: 1,
+                explanation: "Diketahui:\nP = Rp 5.000.000,00\ni = 2% = 0,02 per bulan\nn = 2 tahun = 24 bulan\n\nRumus anuitas:\nA = P × [i × (1 + i)^n] / [(1 + i)^n - 1]\n\nPenyelesaian:\nA = 5.000.000 × [0.02 × (1 + 0.02)^24] / [(1 + 0.02)^24 - 1]\nA = 5.000.000 × [0.02 × 1.608438] / [1.608438 - 1]\nA = 5.000.000 × 0.03216876 / 0.608438\nA = 5.000.000 × 0.05248\nA = Rp 262.400,00 ≈ Rp 263.500,00\n\nJadi, nilai anuitas per bulannya adalah sekitar Rp 263.500,00."
+
+            },
+            {
+                question: "Suatu pinjaman dilunasi dengan anuitas bulanan sebesar Rp1.250.000,00. Besar suku bunga majemuknya adalah 5% per bulan. Jika besar angsuran pada bulan pertama Rp250.000,00; besar pinjamannya adalah ...",
+                options: ["Rp. 18.000.000,00", "Rp. 20.000.000,00", "Rp. 22.000.000,00", "Rp. 25.000.000,00"],
+                correct: 1,
+                explanation: "Diketahui:\nA = Rp 1.250.000,00 (anuitas per bulan)\nBunga (i) = 5% = 0,05 per bulan\nAngsuran pokok pertama = Rp 250.000,00\n\nRumus hubungan anuitas, bunga, dan pinjaman:\nA = Bunga + Angsuran Pokok Pertama\nP × i = Bunga Bulan Pertama\n\nPenyelesaian:\nBunga Bulan Pertama = A - Angsuran Pokok Pertama\nBunga Bulan Pertama = 1.250.000 - 250.000 = Rp 1.000.000,00\n\nKarena bunga pertama = P × i:\nP = Bunga / i\nP = 1.000.000 / 0.05 = Rp 20.000.000,00\n\nJadi, besar pinjamannya adalah Rp 20.000.000,00."
+
+
+            }
+        ];
+
+        // Game State
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = '';
+        let userAnswers = [];
+
+        // DOM Elements
+        const startPage = document.getElementById('startPage');
+        const quizPage = document.getElementById('quizPage');
+        const reviewPage = document.getElementById('reviewPage');
+        const startBtn = document.getElementById('startBtn');
+        const playerNameInput = document.getElementById('playerName');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const nextBtn = document.getElementById('nextBtn');
+        const scoreText = document.getElementById('scoreText');
+        const reviewContainer = document.getElementById('reviewContainer');
+        const restartBtn = document.getElementById('restartBtn');
+        const calcBtn = document.getElementById('calcBtn');
+        const calculator = document.getElementById('calculator');
+        const calcDisplay = document.getElementById('calcDisplay');
+        const sfxCorrect = document.getElementById('sfx-correct');
+        const sfxWrong = document.getElementById('sfx-wrong');
+
+        // Create floating embers
+        function createEmbers() {
+            for (let i = 0; i < 20; i++) {
+                const ember = document.createElement('div');
+                ember.classList.add('ember');
+                ember.style.left = Math.random() * 100 + '%';
+                ember.style.animationDelay = Math.random() * 8 + 's';
+                ember.style.width = ember.style.height = Math.random() * 10 + 5 + 'px';
+                document.body.appendChild(ember);
+            }
+        }
+
+        // Initialize
+        function init() {
+            createEmbers();
+            
+            // Event Listeners
+            startBtn.addEventListener('click', startQuiz);
+            nextBtn.addEventListener('click', nextQuestion);
+            restartBtn.addEventListener('click', restartQuiz);
+            calcBtn.addEventListener('click', toggleCalculator);
+            
+            // Calculator event listeners
+            document.querySelectorAll('.calc-button').forEach(button => {
+                button.addEventListener('click', handleCalcButton);
+            });
+        }
+
+        // Start Quiz
+        function startQuiz() {
+            playerName = playerNameInput.value || 'Damned Soul';
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            
+            startPage.style.display = 'none';
+            quizPage.style.display = 'block';
+            
+            loadQuestion();
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = progress + '%';
+            progressText.textContent = `${currentQuestionIndex + 1} / ${questions.length}`;
+            
+            // Display question
+            questionText.textContent = question.question;
+            
+            // Clear and populate options
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Hide next button
+            nextBtn.style.display = 'none';
+        }
+
+        // Select Option
+        function selectOption(index) {
+            const question = questions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            // Disable all options
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark selected option
+            options[index].classList.add('selected');
+            
+            // Store user answer
+            userAnswers.push({
+                question: question.question,
+                userAnswer: question.options[index],
+                correctAnswer: question.options[question.correct],
+                isCorrect: index === question.correct
+            });
+            
+            // Check if correct
+            if (index === question.correct) {
+                options[index].classList.add('correct');
+                score++;
+                sfxCorrect.play();
+            } else {
+                options[index].classList.add('incorrect');
+                options[question.correct].classList.add('correct');
+                sfxWrong.play();
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'inline-block';
+        }
+
+        // Next Question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Show Results
+        function showResults() {
+            quizPage.style.display = 'none';
+            reviewPage.style.display = 'block';
+            
+            // Display score
+            scoreText.textContent = `${playerName}, Your Score: ${score} / ${questions.length}`;
+            
+            // Generate review cards
+            reviewContainer.innerHTML = '';
+            userAnswers.forEach((answer, index) => {
+                const card = document.createElement('div');
+                card.classList.add('question-card');
+                
+                const header = document.createElement('div');
+                header.classList.add('question-card-header');
+                
+                const title = document.createElement('div');
+                title.classList.add('question-card-title');
+                title.textContent = `Question ${index + 1}`;
+                
+                const icon = document.createElement('div');
+                icon.classList.add('question-card-icon');
+                icon.innerHTML = answer.isCorrect ? '✅' : '❌';
+                
+                header.appendChild(title);
+                header.appendChild(icon);
+                
+                const content = document.createElement('div');
+                content.classList.add('question-card-content');
+                
+                const questionDetail = document.createElement('div');
+                questionDetail.classList.add('question-detail');
+                questionDetail.innerHTML = `<strong>Question:</strong> ${answer.question}`;
+                
+                const userAnswerDetail = document.createElement('div');
+                userAnswerDetail.classList.add('question-detail');
+                userAnswerDetail.innerHTML = `<strong>Your Answer:</strong> ${answer.userAnswer}`;
+                
+                const correctAnswerDetail = document.createElement('div');
+                correctAnswerDetail.classList.add('question-detail');
+                correctAnswerDetail.innerHTML = `<strong>Correct Answer:</strong> ${answer.correctAnswer}`;
+                
+                const explanation = document.createElement('div');
+                explanation.classList.add('explanation');
+                explanation.textContent = questions[index].explanation;
+                
+                content.appendChild(questionDetail);
+                content.appendChild(userAnswerDetail);
+                content.appendChild(correctAnswerDetail);
+                content.appendChild(explanation);
+                
+                card.appendChild(header);
+                card.appendChild(content);
+                
+                // Add click event to toggle card
+                header.addEventListener('click', () => {
+                    card.classList.toggle('open');
+                });
+                
+                reviewContainer.appendChild(card);
+            });
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            reviewPage.style.display = 'none';
+            startPage.style.display = 'flex';
+        }
+
+        // Toggle Calculator
+        function toggleCalculator() {
+            calculator.style.display = calculator.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Calculator State
+        let calcDisplayValue = '0';
+        let calcPreviousValue = '';
+        let calcOperation = '';
+        let calcWaitingForNewValue = false;
+
+        // Handle Calculator Button
+        function handleCalcButton(event) {
+            const button = event.target;
+            const action = button.dataset.action;
+            const value = button.dataset.value;
+            
+            switch (action) {
+                case 'number':
+                    inputNumber(value);
+                    break;
+                case 'decimal':
+                    inputDecimal();
+                    break;
+                case 'operator':
+                    inputOperator(value);
+                    break;
+                case 'equals':
+                    calculate();
+                    break;
+                case 'clear':
+                    clearCalculator();
+                    break;
+                case 'backspace':
+                    backspace();
+                    break;
+                case 'percent':
+                    percent();
+                    break;
+            }
+            
+            updateCalcDisplay();
+        }
+
+        // Calculator Functions
+        function inputNumber(num) {
+            if (calcWaitingForNewValue) {
+                calcDisplayValue = num;
+                calcWaitingForNewValue = false;
+            } else {
+                calcDisplayValue = calcDisplayValue === '0' ? num : calcDisplayValue + num;
+            }
+        }
+
+        function inputDecimal() {
+            if (calcWaitingForNewValue) {
+                calcDisplayValue = '0.';
+                calcWaitingForNewValue = false;
+            } else if (calcDisplayValue.indexOf('.') === -1) {
+                calcDisplayValue += '.';
+            }
+        }
+
+        function inputOperator(nextOperator) {
+            const inputValue = parseFloat(calcDisplayValue);
+            
+            if (calcPreviousValue === '') {
+                calcPreviousValue = inputValue;
+            } else if (calcOperation) {
+                const currentValue = calcPreviousValue || 0;
+                const newValue = performCalculation(currentValue, inputValue, calcOperation);
+                
+                calcDisplayValue = String(newValue);
+                calcPreviousValue = newValue;
+            }
+            
+            calcWaitingForNewValue = true;
+            calcOperation = nextOperator;
+        }
+
+        function calculate() {
+            const inputValue = parseFloat(calcDisplayValue);
+            
+            if (calcPreviousValue !== '') {
+                const newValue = performCalculation(calcPreviousValue, inputValue, calcOperation);
+                
+                calcDisplayValue = String(newValue);
+                calcPreviousValue = '';
+                calcOperation = '';
+                calcWaitingForNewValue = true;
+            }
+        }
+
+        function performCalculation(firstValue, secondValue, operation) {
+            switch (operation) {
+                case '+':
+                    return firstValue + secondValue;
+                case '-':
+                    return firstValue - secondValue;
+                case '*':
+                    return firstValue * secondValue;
+                case '/':
+                    return firstValue / secondValue;
+                default:
+                    return secondValue;
+            }
+        }
+
+        function clearCalculator() {
+            calcDisplayValue = '0';
+            calcPreviousValue = '';
+            calcOperation = '';
+            calcWaitingForNewValue = false;
+        }
+
+        function backspace() {
+            if (calcDisplayValue.length > 1) {
+                calcDisplayValue = calcDisplayValue.slice(0, -1);
+            } else {
+                calcDisplayValue = '0';
+            }
+        }
+
+        function percent() {
+            calcDisplayValue = String(parseFloat(calcDisplayValue) / 100);
+        }
+
+        function updateCalcDisplay() {
+            calcDisplay.textContent = calcDisplayValue;
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
